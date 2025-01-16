@@ -10,8 +10,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -24,15 +24,15 @@ public class Drivetrain {
   private static final int kEncoderResolution = -4096;
 
   // Hardware components
-  private final PWMSparkMax m_leftLeader = new PWMSparkMax(1);
-  private final PWMSparkMax m_leftFollower = new PWMSparkMax(2);
-  private final PWMSparkMax m_rightLeader = new PWMSparkMax(3);
-  private final PWMSparkMax m_rightFollower = new PWMSparkMax(4);
+  private final WPI_TalonSRX m_leftLeader = new WPI_TalonSRX();
+  private final WPI_TalonSRX m_leftFollower = new WPI_TalonSRX();
+  private final WPI_TalonSRX m_rightLeader = new WPI_TalonSRX();
+  private final WPI_TalonSRX m_rightFollower = new WPI_TalonSRX();
 
   @SuppressWarnings("removal")
-private final MotorControllerGroup m_leftGroup = new MotorControllerGroup(m_leftLeader, m_leftFollower);
+  private final MotorControllerGroup m_leftGroup = new MotorControllerGroup((MotorController) m_leftLeader, (MotorController) m_leftFollower);
   @SuppressWarnings("removal")
-private final MotorControllerGroup m_rightGroup = new MotorControllerGroup(m_rightLeader, m_rightFollower);
+  private final MotorControllerGroup m_rightGroup = new MotorControllerGroup((MotorController) m_rightLeader, (MotorController) m_rightFollower);
 
   private final Encoder m_leftEncoder = new Encoder(0, 1);
   private final Encoder m_rightEncoder = new Encoder(2, 3);
@@ -51,7 +51,7 @@ private final MotorControllerGroup m_rightGroup = new MotorControllerGroup(m_rig
   private final Field2d m_fieldSim = new Field2d();
 
   @SuppressWarnings("removal")
-public Drivetrain() {
+  public Drivetrain() {
     // Invert the right side motors
     m_rightGroup.setInverted(true);
 
@@ -68,7 +68,7 @@ public Drivetrain() {
   }
 
   @SuppressWarnings("removal")
-public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
+  public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
     var leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     var rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
     double leftOutput = m_leftPIDController.calculate(m_leftEncoder.getRate(), speeds.leftMetersPerSecond);
